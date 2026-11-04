@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HSK 7-9 · Ôn tập</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:"Segoe UI","Microsoft YaHei",sans-serif;background:#f7f7f7;color:#3c3c3c;line-height:1.55}
+header{background:#58cc02;color:#fff;padding:8px 12px;position:sticky;top:0;z-index:9}
+.top{display:flex;gap:10px;flex-wrap:wrap;font-weight:bold}#tm{margin-left:auto;font-size:18px}
+nav{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+nav button{border:0;background:#fff3;color:#fff;border-radius:8px;padding:6px 10px;cursor:pointer;font-size:14px}
+nav button.on{background:#fff;color:#2e7d00;font-weight:bold}
+.wrap{max-width:820px;margin:auto;padding:14px}
+.card{background:#fff;border-radius:14px;padding:14px 16px;margin:12px 0;border:2px solid #e5e5e5}
+.card.ok{border-color:#58cc02;background:#f3fff0}.card.no{border-color:#ff4b4b;background:#fff4f4}.warn{border-color:#ffc800;background:#fff8e1}
+.btn{border:0;border-radius:12px;padding:10px 16px;font-size:15px;font-weight:bold;cursor:pointer;box-shadow:0 4px 0 rgba(0,0,0,.15);margin:4px}
+.g{background:#58cc02;color:#fff}.b{background:#1cb0f6;color:#fff}.r{background:#ff4b4b;color:#fff}.y{background:#ffc800;color:#4b4b4b}.w{background:#fff;color:#4b4b4b;border:2px solid #e5e5e5}
+.path{display:flex;flex-direction:column;gap:18px;margin:20px 0}.unit{display:flex;align-items:center;gap:14px}
+.node{width:76px;height:76px;border-radius:50%;font-size:30px;border:0;background:#58cc02;box-shadow:0 6px 0 #46a302;cursor:pointer;flex:none}
+.node.today{background:#ffc800;box-shadow:0 6px 0 #d9a800}
+.opt{display:block;width:100%;text-align:left;padding:10px 12px;margin:7px 0;border:2px solid #e5e5e5;border-radius:12px;background:#fff;font-size:16px;cursor:pointer}
+.opt.ok{background:#d7ffb8;border-color:#58cc02}.opt.no{background:#ffdfe0;border-color:#ff4b4b}
+.bar{height:14px;background:#e5e5e5;border-radius:8px;overflow:hidden;margin:6px 0 10px}.bar>div{height:100%;background:#58cc02}
+.big{font-size:44px;text-align:center;margin:8px 0;font-weight:bold}.py{font-size:18px;color:#888;font-weight:normal}
+.ctx{background:#f1f8ff;border-left:4px solid #1cb0f6;padding:8px 10px;border-radius:6px;font-size:15px;white-space:pre-wrap;margin:8px 0}
+.tip{background:#fff8e1;border-left:4px solid #ffc800;padding:8px 10px;border-radius:6px;font-size:14px;margin:8px 0;white-space:pre-wrap}
+.fb{padding:12px;border-radius:12px;margin-top:12px}.fb.ok{background:#d7ffb8}.fb.no{background:#ffdfe0}.fb2{margin-top:8px;font-size:15px}
+.cal{display:flex;gap:5px;flex-wrap:wrap}.cal div{width:36px;height:36px;border-radius:8px;background:#e5e5e5;font-size:11px;display:flex;align-items:center;justify-content:center}
+.cal .d1{background:#a5ed6e}.cal .d2{background:#58cc02;color:#fff}
+.chip{display:block;width:100%;text-align:left;padding:9px;margin:5px 0;border:2px solid #ccc;border-radius:10px;cursor:pointer;background:#fff;font-size:14px}.chip.used{opacity:.35}
+.slot{display:inline-block;min-width:38px;padding:6px 10px;margin:3px;border:2px dashed #bbb;border-radius:8px;text-align:center;font-weight:bold}.slot.fix{border-style:solid;background:#eee}
+input.t{width:100%;font-size:18px;padding:9px;border:2px solid #ccc;border-radius:10px}
+textarea{width:100%;height:140px;font-size:16px;border:2px solid #ccc;border-radius:10px;padding:8px}
+.tag{display:inline-block;background:#fff4d6;color:#a06d00;border-radius:6px;padding:2px 8px;font-size:13px;font-weight:bold}
+table{width:100%;border-collapse:collapse;font-size:14px}td,th{border-bottom:1px solid #eee;padding:6px;text-align:left;vertical-align:top}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}.grp{margin:22px 0 4px;color:#2e7d00}
+details summary{cursor:pointer;color:#1cb0f6;font-size:14px;margin-top:6px}
+.flash{min-height:200px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;text-align:center}
+.fw{font-size:54px;font-weight:bold}.fbk{font-size:20px;display:none}.timer{font-size:56px;font-weight:bold;text-align:center;color:#2e7d00}
+</style>
+</head>
+<body>
+<header><div class="top"><span id="stats"></span><span id="tm"></span></div><nav id="nav"></nav></header>
+<div class="wrap" id="app"></div>
+<script src="data1.js"></script>
+<script src="data2.js"></script>
+<script>
+const LET="ABCD";
+const D={VOCAB:typeof VOCAB!=="undefined"?VOCAB:[],IDIOM:typeof IDIOM!=="undefined"?IDIOM:[],FILL:typeof FILL!=="undefined"?FILL:[],
+READ:typeof READ!=="undefined"?READ:[],ORDQ:typeof ORDQ!=="undefined"?ORDQ:[],PARA:typeof PARA!=="undefined"?PARA:[],
+FIXED_E:typeof FIXED_E!=="undefined"?FIXED_E:"",ORDER_ANS:typeof ORDER_ANS!=="undefined"?ORDER_ANS:"",
+SHORT:typeof SHORT!=="undefined"?SHORT:[],TASK:typeof TASK!=="undefined"?TASK:[],SETS:typeof SETS!=="undefined"?SETS:{}};
+const HAS_DAILY=D.VOCAB.length>0,HAS_BN=Object.keys(D.SETS).length>0;
+const BN_ORDER={1:"BDGFE",2:"FEDGA",3:"EBGDF",4:"BAGDE",5:"EBDAF"};
+const pad=n=>String(n).padStart(2,"0");
+const dstr=d=>d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
+const today=()=>dstr(new Date());
+function addDays(s,n){const[y,m,d]=s.split("-").map(Number);return dstr(new Date(y,m-1,d+n));}
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+const sample=(a,n)=>shuffle(a).slice(0,n);
+const norm=s=>String(s||"").replace(/[\s，。、,.;；：:！!？?“”"'‘’（）()《》…—·\-]/g,"");
+const br=s=>String(s).replace(/\n/g,"<br>");
+const srcT=q=>q.src?`<small>${q.src}</small><br>`:"";
+const app=document.getElementById("app");
+
+const Q={};const add=q=>{Q[q.id]=q;};
+D.VOCAB.forEach(v=>{add({id:"vm:"+v[0],u:1,t:"vocab",v,pool:D.VOCAB,dir:"m"});add({id:"vr:"+v[0],u:1,t:"vocab",v,pool:D.VOCAB,dir:"r"});});
+D.IDIOM.forEach(v=>{add({id:"im:"+v[0],u:2,t:"vocab",v,pool:D.IDIOM,dir:"m"});add({id:"ir:"+v[0],u:2,t:"vocab",v,pool:D.IDIOM,dir:"r"});});
+D.FILL.forEach((f,i)=>add({id:"f:"+i,u:3,t:"mc",...f}));
+D.READ.forEach(r=>add({id:"r:"+r.src,u:4,t:"mc",...r}));
+D.ORDQ.forEach(r=>add({id:"o:"+r.src,u:5,t:"mc",...r}));
+if(D.PARA.length)add({id:"o:full",u:5,t:"order",src:"Câu 62–66",q:"Sắp xếp đầy đủ các đoạn"});
+D.SHORT.forEach(s=>add({id:"s:"+s.src,u:6,t:"type",...s}));
+D.TASK.forEach(t=>add({id:"t:"+t.src,u:7,t:"task",...t}));
+for(const s in D.SETS){const B=D.SETS[s];
+B.read.forEach(g=>g.q.forEach(r=>add({id:`s${s}-${r[0]}`,u:8,set:+s,sec:"read",t:"mcf",g:g.t,n:r[0],src:`Bộ ${s} · Câu ${r[0]}`,q:r[1],ctx:r[2],opts:r[3].split("|"),ans:LET.indexOf(r[4])})));
+if(BN_ORDER[s])add({id:`s${s}-69`,u:8,set:+s,sec:"read",t:"letters",n:"69–73",g:"69–73 · Sắp xếp đoạn",src:`Bộ ${s} · Câu 69–73`,q:`Sắp xếp đoạn: mở PDF bộ ${s}, đọc các đoạn A–G (đoạn C cố định ở đầu, có 1 đoạn nhiễu). Gõ 5 chữ cái theo thứ tự câu 69–73.`,ans:BN_ORDER[s]});
+B.short.forEach(g=>g.q.forEach(r=>add({id:`s${s}-${r[0]}`,u:8,set:+s,sec:"short",t:"type",g:g.t,n:r[0],src:`Bộ ${s} · Câu ${r[0]}`,q:r[1],ctx:r[2],show:r[3],alts:r[4]})));}
+
+const UNITS=[{u:1,name:"Từ vựng cốt lõi",icon:"📘",n:8},{u:2,name:"Thành ngữ",icon:"🐉",n:8},{u:3,name:"Từ dễ nhầm",icon:"⚖️",n:8},
+{u:4,name:"Đọc hiểu đề mẫu 41–61",icon:"📖",n:6},{u:5,name:"Sắp xếp đoạn đề mẫu 62–66",icon:"🧩",n:5},{u:6,name:"Trả lời ngắn đề mẫu 67–80",icon:"✏️",n:5},
+{u:7,name:"Viết – Dịch – Nói",icon:"🎤",n:1},{u:8,name:"Luyện nhanh Bắc Ngữ (trộn 5 bộ)",icon:"📗",n:6}];
+
+const LS="hsk79_all_v1",INT={1:2,2:4,3:7,4:14};
+function loadState(){const def={xp:0,streak:0,best:0,lastDay:"",goal:1,hist:{},wrong:{},seen:{},mastered:0,exams:[],fcWords:null,fcBox:{}};
+let s=null;try{s=JSON.parse(localStorage.getItem(LS)||"null");}catch(e){}return Object.assign(def,s||{});}
+let S=loadState();
+const save=()=>localStorage.setItem(LS,JSON.stringify(S));
+const curStreak=()=>(S.lastDay===today()||S.lastDay===addDays(today(),-1))?S.streak:0;
+const doneToday=()=>S.hist[today()]||0;
+const dueIds=()=>Object.keys(S.wrong).filter(id=>Q[id]&&S.wrong[id].due<=today());
+function srs(id,ok){S.seen[id]=1;const w=S.wrong[id];
+if(ok){if(w){w.box++;if(w.box>=5){delete S.wrong[id];S.mastered++;}else w.due=addDays(today(),INT[w.box]);}}
+else S.wrong[id]={box:0,due:addDays(today(),1),n:(w?w.n:0)+1};}
+function completeLesson(xp){const t=today(),y=addDays(t,-1);
+if(!S.hist[t])S.streak=(S.lastDay===y)?S.streak+1:(S.lastDay===t?S.streak:1);
+S.hist[t]=(S.hist[t]||0)+1;S.lastDay=t;S.xp+=xp;S.best=Math.max(S.best,S.streak);save();hdr();return S.hist[t]===S.goal;}
+function label(id){const q=Q[id];if(!q)return id;if(q.t==="vocab")return`${q.v[0]} – ${q.v[2]}`;if(q.t==="order")return"Sắp xếp đoạn 62–66 (đề mẫu)";return(q.src?q.src+": ":"")+String(q.q).slice(0,45);}
+function typeOk(q,v){const n=norm(v);if(!n)return{ok:false,msg:"(Bỏ trống) "};
+if(n.length>10)return{ok:false,msg:"⚠️ Quá 10 chữ – đề yêu cầu tối đa 10 chữ. "};
+return{ok:q.alts.some(g=>g.every(k=>n.includes(k))),msg:""};}
+function lettersOk(q,v){const a=String(v||"").toUpperCase().replace(/[^A-G]/g,"");let part=0;for(let k=0;k<5;k++)if(a[k]===q.ans[k])part++;return{ok:a===q.ans,part};}
+
+const TABS=[["home","🏠 Hôm nay"],["bn","📗 Đề Bắc Ngữ"],["fc","🃏 Flashcard"],["wrong","📕 Sổ câu sai"],["info","📘 Cấu trúc & mẹo"],["timer","⏱ Thi thử"],["set","⚙️ Cài đặt"]];
+let TAB="home";
+document.getElementById("nav").innerHTML=TABS.map(([k,n])=>`<button data-k="${k}" onclick="go('${k}')">${n}</button>`).join("");
+function hdr(){document.getElementById("stats").textContent=`🔥 ${curStreak()} ngày · ⭐ ${S.xp} XP · 🎯 ${doneToday()}/${S.goal} bài · 🔁 ${dueIds().length} câu đến hạn`;
+document.title=(doneToday()<S.goal?"(!) ":"")+"HSK 7-9 · Ôn tập";
+document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.k===TAB));}
+function go(t){stopTimer();TAB=t;LES=null;EX=null;hdr();({home:vHome,bn:vBN,fc:vFC,wrong:vWrong,info:vInfo,timer:vTimer,set:vSet})[t]();scrollTo(0,0);}
+
+function vHome(){const d=doneToday(),due=dueIds().length,wc=Object.keys(S.wrong).filter(id=>Q[id]).length;
+const dow=new Date().getDay(),suggest=dow===0?7:dow;let h="";
+if(!HAS_DAILY||!HAS_BN)h+=`<div class="card warn">⚠️ Chưa đọc được ${!HAS_DAILY?"<b>data1.js</b> ":""}${!HAS_BN?"<b>data2.js</b>":""}. Kiểm tra tên file (chữ thường) và nội dung đã dán đủ chưa.</div>`;
+h+=`<div class="card">`+(d>=S.goal?`🎉 <b>Đã đạt mục tiêu hôm nay</b> (${d}/${S.goal} bài).`:`🎯 <b>Mục tiêu hôm nay: ${d}/${S.goal} bài</b><br>`+
+(curStreak()>0&&S.lastDay!==today()?`⚠️ Làm ngay ít nhất 1 bài để không mất chuỗi 🔥 ${curStreak()} ngày!`:`Hoàn thành ít nhất 1 bài (chặng học, đề Bắc Ngữ hoặc 20 flashcard) để giữ chuỗi.`))+
+`<br><small>Chuỗi dài nhất: ${S.best} ngày · Đã thuộc hẳn: ${S.mastered} câu</small></div>`;
+h+=`<div class="card"><b>🔁 Sổ câu sai:</b> ${due} câu đến hạn / ${wc} câu trong sổ<br><button class="btn r" onclick="startReview()">ÔN CÂU SAI</button><button class="btn w" onclick="go('wrong')">Xem sổ</button></div><div class="path">`;
+UNITS.forEach((U,i)=>{const all=Object.values(Q).filter(q=>q.u===U.u);if(!all.length)return;const seen=all.filter(q=>S.seen[q.id]).length;
+h+=`<div class="unit" style="margin-left:${[0,60,110,60][i%4]}px"><button class="node ${U.u===suggest?"today":""}" onclick="startLesson(${U.u})">${U.icon}</button>
+<div><b>${U.u}. ${U.name}</b> ${U.u===suggest?'<span class="tag">⭐ Gợi ý hôm nay</span>':""}<br><small>${seen}/${all.length} câu đã gặp</small>
+<div class="bar" style="width:160px"><div style="width:${Math.round(seen/all.length*100)}%"></div></div></div></div>`;});
+h+=`</div><div class="card"><b>📅 14 ngày gần nhất</b><div class="cal">`;
+for(let k=13;k>=0;k--){const dd=addDays(today(),-k),n=S.hist[dd]||0;h+=`<div class="${n>=S.goal?"d2":n>0?"d1":""}" title="${dd}: ${n} bài">${dd.slice(8)}</div>`;}
+app.innerHTML=h+`</div></div>`;}
+
+let LES=null,CUR=null;
+function startLesson(u){const U=UNITS.find(x=>x.u===u);const due=sample(dueIds(),2);
+const pool=Object.values(Q).filter(q=>q.u===u&&!S.wrong[q.id]&&!due.includes(q.id));
+const unseen=pool.filter(q=>!S.seen[q.id]),old=pool.filter(q=>S.seen[q.id]);
+runLesson([...due,...[...shuffle(unseen),...shuffle(old)].slice(0,U.n).map(q=>q.id)]);}
+function startReview(){let ids=dueIds();if(!ids.length){ids=Object.keys(S.wrong).filter(id=>Q[id]);
+if(!ids.length){alert("Chưa có câu sai nào 👍");return;}if(!confirm("Chưa có câu nào đến hạn. Ôn sớm toàn bộ câu sai?"))return;}
+runLesson(shuffle(ids).slice(0,10));}
+function runLesson(ids){if(!ids.length){alert("Không có câu nào.");return;}stopTimer();
+LES={queue:ids.map(id=>({id,retry:false})),i:0,correct:0,total:0,gained:0,wrongIds:[]};renderQ();}
+function mcHTML(title,big,ctx){return`<div class="card"><h3>${title}</h3>`+(big?`<div class="big">${big}</div>`:"")+(ctx?`<div class="ctx">${ctx}</div>`:"")+
+CUR.opts.map((o,i)=>`<button class="opt" id="o${i}" onclick="pick(${i})">${o}</button>`).join("")+`<div id="fb"></div></div>`;}
+function renderQ(){hdr();const item=LES.queue[LES.i],q=Q[item.id];const pct=Math.round(LES.i/LES.queue.length*100);
+let h=`<button class="btn w" onclick="if(confirm('Thoát bài? Bài chưa xong sẽ không tính vào mục tiêu.'))go('home')">✖</button><div class="bar"><div style="width:${pct}%"></div></div>`;
+if(item.retry)h+=`<span class="tag">🔁 Làm lại câu vừa sai</span>`;else if(S.wrong[item.id])h+=`<span class="tag">🧠 Câu sai cũ – ôn lại</span>`;
+CUR={q,done:false};
+if(q.t==="vocab"){const[w,p,m]=q.v,others=sample(q.pool.filter(x=>x[0]!==w),3);
+if(q.dir==="m"){CUR.opts=shuffle([m,...others.map(x=>x[2])]);CUR.ci=CUR.opts.indexOf(m);h+=mcHTML("Chọn nghĩa đúng",`${w}<div class="py">${p}</div>`,"");}
+else{CUR.opts=shuffle([w,...others.map(x=>x[0])]);CUR.ci=CUR.opts.indexOf(w);h+=mcHTML(`Từ nào có nghĩa: “${m}”?`,"","");}
+CUR.exp=`<b>${w}</b> [${p}] = ${m}`;}
+else if(q.t==="mc"){CUR.opts=shuffle(q.o);CUR.ci=CUR.opts.indexOf(q.o[0]);CUR.exp=`Đáp án: <b>${q.o[0]}</b> — ${q.e||""}`;h+=mcHTML(srcT(q)+br(q.q),"",q.ctx);}
+else if(q.t==="mcf"){CUR.opts=q.opts.map((o,k)=>LET[k]+". "+o);CUR.ci=q.ans;CUR.exp=`Đáp án: <b>${CUR.opts[q.ans]}</b><div class="ctx">📄 ${q.ctx}</div>`;h+=mcHTML(srcT(q)+br(q.q),"","");}
+else if(q.t==="type"){const ctx=!q.ctx?"":q.u===8?`<details><summary>📄 Gợi ý: câu then chốt trong bài</summary><div class="ctx">${q.ctx}</div></details>`:`<div class="ctx">${q.ctx}</div>`;
+h+=`<div class="card">${srcT(q)}<small>Trả lời tối đa 10 chữ</small><h3>${br(q.q)}</h3>${ctx}<input class="t" id="ans" placeholder="Gõ câu trả lời bằng chữ Hán…" onkeydown="if(event.key==='Enter')qCheckType()">
+<button class="btn g" onclick="qCheckType()">KIỂM TRA</button><div id="fb"></div></div>`;}
+else if(q.t==="letters"){h+=`<div class="card">${srcT(q)}<h3>${q.q}</h3><input class="t" id="ans" maxlength="10" placeholder="VD: BDGFE" onkeydown="if(event.key==='Enter')qCheckLetters()">
+<button class="btn g" onclick="qCheckLetters()">KIỂM TRA</button><div id="fb"></div></div>`;}
+else if(q.t==="order"){CUR.seq=[];CUR.items=shuffle(D.PARA);h+=`<div class="card">${srcT(q)}<h3>Bấm lần lượt 5 đoạn theo đúng thứ tự (loại 1 đoạn nhiễu)</h3><div id="slots"></div><div id="chips"></div>
+<button class="btn w" onclick="CUR.seq=[];drawOrder()">Xóa chọn lại</button><button class="btn g" onclick="checkOrder()">KIỂM TRA</button><div id="fb"></div></div>`;}
+else if(q.t==="task"){h+=`<div class="card">${srcT(q)}<h3>${q.q}</h3><div class="ctx">${q.ctx}</div><div class="tip">💡 ${q.tips}</div>
+<button class="btn y" onclick="startTimer(${q.time})">⏱ Bấm giờ ${q.time} phút</button><textarea placeholder="Viết bài / dàn ý / ghi chú khi nói ở đây…"></textarea>
+<p>Tự đánh giá sau khi làm:</p><button class="btn g" onclick="selfRate(true)">✅ Đạt</button><button class="btn r" onclick="selfRate(false)">❌ Chưa đạt – nhắc lại sau</button><div id="fb"></div></div>`;}
+app.innerHTML=h;if(q.t==="order")drawOrder();const a=document.getElementById("ans");if(a)a.focus();}
+function pick(i){if(CUR.done)return;CUR.done=true;const ok=i===CUR.ci;
+document.getElementById("o"+i).classList.add(ok?"ok":"no");document.getElementById("o"+CUR.ci).classList.add("ok");record(ok);feedback(ok,CUR.exp);}
+function qCheckType(){if(CUR.done)return;const v=document.getElementById("ans").value;if(!norm(v))return;CUR.done=true;const r=typeOk(CUR.q,v);record(r.ok);
+feedback(r.ok,r.msg+`Đáp án tham khảo: <b>${CUR.q.show}</b>. ${CUR.q.e||""}`+(r.ok?"":` <button class="btn w" onclick="overrideLesson()">✋ Tôi đúng (ý tương đương)</button>`));}
+function qCheckLetters(){if(CUR.done)return;const v=document.getElementById("ans").value;if(!v.trim())return;CUR.done=true;const r=lettersOk(CUR.q,v);record(r.ok);
+feedback(r.ok,`Đúng ${r.part}/5 vị trí. Đáp án: <b>C → ${CUR.q.ans.split("").join(" → ")}</b>`);}
+function overrideLesson(){const item=LES.queue[LES.i],id=item.id;
+if(!item.retry){if(CUR.prev)S.wrong[id]=CUR.prev;else delete S.wrong[id];srs(id,true);
+const k=LES.queue.findIndex((x,j)=>j>LES.i&&x.id===id&&x.retry);if(k>0)LES.queue.splice(k,1);
+LES.wrongIds=LES.wrongIds.filter(x=>x!==id);LES.correct++;LES.gained+=10;save();}
+document.getElementById("fb").innerHTML=`<div class="fb ok"><b>✅ Đã tính là đúng.</b></div><button class="btn g" onclick="nextQ()">TIẾP TỤC ➜</button>`;}
+function drawOrder(){const s=CUR.seq;let slots="";
+for(let k=0;k<6;k++){if(k===3)slots+=`<span class="slot fix">E</span>`;else{const idx=k<3?k:k-1;slots+=`<span class="slot">${s[idx]||"?"}</span>`;}}
+document.getElementById("slots").innerHTML=slots+`<div class="tip">${D.FIXED_E}</div>`;
+document.getElementById("chips").innerHTML=CUR.items.map(p=>`<button class="chip ${s.includes(p.k)?"used":""}" onclick="chip('${p.k}')">${p.t}</button>`).join("");}
+function chip(k){if(CUR.done||CUR.seq.includes(k)||CUR.seq.length>=5)return;CUR.seq.push(k);drawOrder();}
+function checkOrder(){if(CUR.done)return;if(CUR.seq.length<5){alert("Hãy chọn đủ 5 đoạn.");return;}CUR.done=true;
+const ok=CUR.seq.join("")===D.ORDER_ANS;record(ok);feedback(ok,`Đáp án: <b>D → A → F → E → G → C</b>, đoạn nhiễu là <b>B</b> (鲸爆).`);}
+function selfRate(ok){if(CUR.done)return;CUR.done=true;record(ok);
+feedback(ok,(CUR.q.ref?`<b>Bản tham khảo:</b><br>${CUR.q.ref}<br>`:"")+(ok?"":"<br>📌 Bài này sẽ được nhắc lại vào ngày mai."));}
+function record(ok){const item=LES.queue[LES.i],id=item.id;S.seen[id]=1;
+if(!item.retry){CUR.prev=S.wrong[id]?{...S.wrong[id]}:null;LES.total++;srs(id,ok);
+if(ok){LES.correct++;LES.gained+=10;}else{LES.wrongIds.push(id);LES.queue.push({id,retry:true});}}save();}
+function feedback(ok,exp){const retry=LES.queue[LES.i].retry;
+document.getElementById("fb").innerHTML=`<div class="fb ${ok?"ok":"no"}"><b>${ok?(retry?"✅ Đúng rồi!":"✅ Chính xác! +10 XP"):"❌ Chưa đúng – đã lưu vào sổ câu sai"}</b><br>${exp||""}</div><button class="btn g" onclick="nextQ()">TIẾP TỤC ➜</button>`;}
+function nextQ(){LES.i++;if(LES.i>=LES.queue.length)finish();else renderQ();}
+function finish(){stopTimer();const reached=completeLesson(LES.gained);
+app.innerHTML=`<div class="card" style="text-align:center"><div class="big">🏁</div><h2>Hoàn thành bài!</h2>
+<p>Đúng <b>${LES.correct}/${LES.total}</b> · +${LES.gained} XP · 🔥 ${S.streak} ngày</p>${reached?"<p>🎉 <b>Bạn đã đạt mục tiêu hôm nay!</b></p>":""}
+${LES.wrongIds.length?`<div class="tip" style="text-align:left"><b>Câu sai (nhắc lại từ ngày mai):</b><br>${LES.wrongIds.map(label).join("<br>")}</div>`:"<p>Không sai câu nào 👏</p>"}
+<button class="btn g" onclick="go('home')">VỀ TRANG CHỦ</button><button class="btn r" onclick="startReview()">ÔN CÂU SAI</button></div>`;}
+
+const SECN={read:"Đọc hiểu 41–73",short:"Trả lời ngắn 74–87",all:"Cả hai phần"};let EX=null;
+function bestOf(lb){const h=S.exams.filter(x=>x.label===lb);return h.length?Math.max(...h.map(x=>x.pct)):null;}
+function vBN(){if(!HAS_BN){app.innerHTML=`<div class="card warn">⚠️ Chưa đọc được file data2.js.</div>`;return;}
+let h=`<div class="card">Mở PDF đề Bắc Ngữ bên cạnh để đọc toàn văn bài. Bấm <b>Nộp bài</b> để chấm điểm. Câu sai vào Sổ câu sai chung.</div><div class="grid">`;
+for(const s in D.SETS){h+=`<div class="card"><h3>📘 Bộ ${s}</h3>`;
+["read","short","all"].forEach(sec=>{const b=bestOf(`Bộ ${s} · ${SECN[sec]}`);
+h+=`<button class="btn ${sec==="all"?"g":"b"}" style="width:100%" onclick="startExam(${s},'${sec}')">${SECN[sec]}${b!==null?` · cao nhất ${b}%`:""}</button>`;});h+=`</div>`;}
+const w=Object.keys(S.wrong).filter(id=>Q[id]&&Q[id].u===8).length;
+h+=`</div><div class="card"><h3>📕 Câu sai trong đề Bắc Ngữ: ${w} câu</h3><button class="btn r" onclick="startExamWrong()" ${w?"":"disabled"}>LÀM LẠI DẠNG ĐỀ</button></div>`;
+h+=`<div class="card"><h3>📊 Lịch sử (15 lần gần nhất)</h3>`+(S.exams.length?`<table><tr><th>Ngày</th><th>Bài</th><th>Đọc hiểu</th><th>Trả lời ngắn</th><th>Tổng</th></tr>`+
+S.exams.slice(-15).reverse().map(x=>`<tr><td>${x.date}</td><td>${x.label}</td><td>${x.mc}</td><td>${x.sa}</td><td><b>${x.pct}%</b></td></tr>`).join("")+`</table>`:"Chưa có lần làm bài nào.")+`</div>`;
+app.innerHTML=h;}
+function startExam(s,sec){runExam(Object.values(Q).filter(q=>q.u===8&&q.set===s&&(sec==="all"||q.sec===sec)),`Bộ ${s} · ${SECN[sec]}`);}
+function startExamWrong(){runExam(Object.keys(S.wrong).filter(id=>Q[id]&&Q[id].u===8).map(id=>Q[id]),"Câu sai đề Bắc Ngữ");}
+function runExam(list,lb){if(!list.length){alert("Không có câu nào 👍");return;}stopTimer();EX={list,label:lb,ans:{},ovr:{},done:false,hi:-1,reached:false};drawExam();scrollTo(0,0);}
+function drawExam(){const L=EX.list;const mins=Math.ceil(L.filter(q=>q.t==="mcf").length*1.3+L.filter(q=>q.t==="type").length*1.2+L.filter(q=>q.t==="letters").length*6);
+let h=`<div class="card"><h2>${EX.label}</h2><p>${L.length} câu · thời gian gợi ý <b>${mins} phút</b>. Chỉ mở “📄 Gợi ý” khi thật sự cần.</p>
+<button class="btn y" onclick="startTimer(${mins})">⏱ Bấm giờ ${mins} phút</button><button class="btn w" onclick="go('bn')">↩ Quay lại</button></div>`;let lg="";
+L.forEach((q,i)=>{const g=`Bộ ${q.set} · ${q.g}`;if(g!==lg){h+=`<h3 class="grp">${g}</h3>`;lg=g;}
+h+=`<div class="card" id="c${i}"><b>${q.n}. ${br(q.q)}</b>`;
+if(q.t==="mcf")h+=q.opts.map((o,k)=>`<label class="opt" id="o${i}_${k}"><input type="radio" name="r${i}" onchange="EX.ans[${i}]=${k}"> ${LET[k]}. ${o}</label>`).join("");
+else if(q.t==="type")h+=`<input class="t" id="a${i}" placeholder="Gõ chữ Hán, tối đa 10 chữ" oninput="EX.ans[${i}]=this.value">`;
+else h+=`<input class="t" id="a${i}" maxlength="10" placeholder="VD: BDGFE" oninput="EX.ans[${i}]=this.value">`;
+if(q.ctx)h+=`<details id="d${i}"><summary>📄 Gợi ý: câu then chốt trong bài</summary><div class="ctx">${q.ctx}</div></details>`;
+h+=`<div class="fb2" id="f${i}"></div></div>`;});
+h+=`<div class="card" style="text-align:center" id="sub"><button class="btn g" onclick="submitExam()">✅ NỘP BÀI & CHẤM ĐIỂM</button></div><div id="res"></div>`;app.innerHTML=h;}
+function exOk(i){const q=EX.list[i],a=EX.ans[i];if(q.t==="mcf")return a===q.ans;if(i in EX.ovr)return EX.ovr[i];return q.t==="type"?typeOk(q,a).ok:lettersOk(q,a).ok;}
+function exMark(i){const q=EX.list[i],ok=exOk(i);const c=document.getElementById("c"+i),f=document.getElementById("f"+i);
+c.className="card "+(ok?"ok":"no");const d=document.getElementById("d"+i);if(d)d.open=true;
+if(q.t==="mcf"){c.querySelectorAll("input").forEach(x=>x.disabled=true);document.getElementById(`o${i}_${q.ans}`).classList.add("ok");
+if(EX.ans[i]!==undefined&&!ok)document.getElementById(`o${i}_${EX.ans[i]}`).classList.add("no");f.innerHTML=`${ok?"✅ Đúng":"❌ Sai"} · Đáp án: <b>${LET[q.ans]}. ${q.opts[q.ans]}</b>`;}
+else if(q.t==="type"){document.getElementById("a"+i).disabled=true;const r=typeOk(q,EX.ans[i]);
+f.innerHTML=`${ok?"✅ Đúng":"❌ Sai "+r.msg} · Đáp án tham khảo: <b>${q.show}</b>`+(norm(EX.ans[i])?` <button class="btn w" onclick="exOvr(${i},${!ok})">${ok?"↩ Thực ra tôi sai":"✋ Tôi đúng (ý tương đương)"}</button>`:"");}
+else{document.getElementById("a"+i).disabled=true;const r=lettersOk(q,EX.ans[i]);f.innerHTML=`${ok?"✅ Đúng":"❌ Sai"} · Đúng ${r.part}/5 vị trí · Đáp án: <b>C → ${q.ans.split("").join(" → ")}</b>`;}}
+function submitExam(){if(EX.done)return;const blank=EX.list.filter((q,i)=>EX.ans[i]===undefined||EX.ans[i]==="").length;
+if(blank&&!confirm(`Còn ${blank} câu chưa làm. Vẫn nộp bài?`))return;EX.done=true;stopTimer();document.getElementById("sub").style.display="none";
+let c=0;EX.list.forEach((q,i)=>{exMark(i);const ok=exOk(i);srs(q.id,ok);if(ok)c++;});
+EX.reached=completeLesson(c*10);exRecord();document.getElementById("res").scrollIntoView({behavior:"smooth"});}
+function exOvr(i,v){EX.ovr[i]=v;exMark(i);const id=EX.list[i].id;if(v)delete S.wrong[id];else S.wrong[id]=S.wrong[id]||{box:0,due:addDays(today(),1),n:1};exRecord();}
+function exRecord(){const mc=[0,0],sa=[0,0];EX.list.forEach((q,i)=>{const t=q.t==="type"?sa:mc;t[1]++;if(exOk(i))t[0]++;});
+const tot=mc[0]+sa[0],n=mc[1]+sa[1],pct=Math.round(tot/n*100);
+const e={date:new Date().toLocaleDateString("vi-VN"),label:EX.label,mc:mc[1]?`${mc[0]}/${mc[1]}`:"–",sa:sa[1]?`${sa[0]}/${sa[1]}`:"–",pct};
+if(EX.hi<0){S.exams.push(e);EX.hi=S.exams.length-1;}else S.exams[EX.hi]=e;save();hdr();
+const lv=pct>=85?"🌟 Rất tốt":pct>=70?"👍 Khá":pct>=50?"🙂 Trung bình – cần ôn thêm":"💪 Cần luyện nhiều hơn";
+document.getElementById("res").innerHTML=`<div class="card" style="text-align:center"><div class="big">${pct}%</div><p><b>${lv}</b></p>${EX.reached?"<p>🎉 <b>Bạn đã đạt mục tiêu hôm nay!</b></p>":""}
+<table>${mc[1]?`<tr><td>Đọc hiểu (trắc nghiệm + sắp xếp đoạn)</td><td>${mc[0]}/${mc[1]}</td></tr>`:""}${sa[1]?`<tr><td>Trả lời ngắn</td><td>${sa[0]}/${sa[1]}</td></tr>`:""}<tr><td><b>Tổng</b></td><td><b>${tot}/${n}</b></td></tr></table>
+<p><small>Câu sai đã vào Sổ câu sai, nhắc lại từ ngày mai. Kéo lên để xem đáp án từng câu.</small></p>
+<button class="btn r" onclick="startReview()">ÔN CÂU SAI</button><button class="btn b" onclick="runExam(EX.list,EX.label)">LÀM LẠI BÀI NÀY</button><button class="btn w" onclick="go('bn')">↩ DANH SÁCH ĐỀ</button></div>`;}
+
+let FC=null,fcCount=0;
+function fcWords(){if(S.fcWords&&S.fcWords.length)return S.fcWords;return[...D.VOCAB,...D.IDIOM].map(v=>[v[0],v[1],"",v[2]]);}
+function vFC(){app.innerHTML=`<div class="card"><h2>🃏 Flashcard</h2><p id="fcstat"></p>
+<div class="card flash" onclick="fcFlip()"><div class="fw" id="fw"></div><div class="fbk" id="fbk"></div></div>
+<div style="text-align:center"><button class="btn r" onclick="fcRate(0)">❌ Quên</button><button class="btn g" onclick="fcRate(1)">✅ Nhớ</button><button class="btn b" onclick="fcDict()">🔎 Tra nghĩa</button></div>
+<p><small>Bấm thẻ để lật. Lật đủ 20 thẻ = hoàn thành 1 bài (+50 XP).</small></p></div>
+<div class="card"><h3>📥 Nhập danh sách từ file PDF</h3><p>Copy chữ từ file "từ vựng HSK 7-9.pdf" rồi dán vào đây (dạng: <code>5401 7-9 挨 āi 动、介</code>).</p>
+<textarea id="imp"></textarea><button class="btn b" onclick="fcImport()">Nhập</button><button class="btn w" onclick="fcReset()">Về bộ từ mặc định</button> <span id="impmsg"></span></div>`;fcNext();}
+function fcNext(){const W=fcWords();if(!W.length){document.getElementById("fw").textContent="(chưa có từ)";return;}
+let min=99;W.forEach(w=>min=Math.min(min,S.fcBox[w[0]]||0));const pool=W.filter(w=>(S.fcBox[w[0]]||0)===min);
+FC=pool[Math.floor(Math.random()*pool.length)];document.getElementById("fw").textContent=FC[0];
+const b=document.getElementById("fbk");b.innerHTML=`${FC[1]} ${FC[2]?`<span class="tag">${FC[2]}</span>`:""}<br>${FC[3]||"(bấm Tra nghĩa)"}`;b.style.display="none";
+const learned=W.filter(w=>(S.fcBox[w[0]]||0)>=3).length;
+document.getElementById("fcstat").textContent=`Tổng ${W.length} từ · Đã thuộc: ${learned} · Thẻ này ở hộp ${S.fcBox[FC[0]]||0} · Phiên này: ${fcCount}/20`;}
+function fcFlip(){const b=document.getElementById("fbk");b.style.display=b.style.display==="none"?"block":"none";}
+function fcRate(ok){if(!FC)return;S.fcBox[FC[0]]=ok?Math.min((S.fcBox[FC[0]]||0)+1,5):0;fcCount++;
+if(fcCount>=20){fcCount=0;const r=completeLesson(50);alert("🎉 Xong 20 thẻ! +50 XP"+(r?" · Đạt mục tiêu hôm nay!":""));}save();fcNext();}
+function fcDict(){if(FC)window.open("https://hanzii.net/search/word/"+encodeURIComponent(FC[0])+"?hl=vi");}
+function fcImport(){const re=/^(\d{4,5})\s+7-9\s+(\S+)\s+([^\u4e00-\u9fff]+?)\s*([\u4e00-\u9fff、\s]*)$/;const old={};
+[...D.VOCAB,...D.IDIOM].forEach(v=>old[v[0]]=v[2]);fcWords().forEach(w=>{if(w[3])old[w[0]]=w[3];});const arr=[];
+document.getElementById("imp").value.split("\n").forEach(l=>{const m=l.trim().match(re);if(m)arr.push([m[2],m[3].trim(),m[4].trim(),old[m[2]]||""]);});
+if(arr.length){S.fcWords=arr;save();fcNext();}document.getElementById("impmsg").textContent=`Đã nhập ${arr.length} từ.`;}
+function fcReset(){if(confirm("Quay về bộ từ mặc định?")){S.fcWords=null;save();fcNext();}}
+
+function vWrong(){const ids=Object.keys(S.wrong).filter(id=>Q[id]).sort((a,b)=>S.wrong[a].due.localeCompare(S.wrong[b].due));
+let h=`<div class="card"><h2>📕 Sổ câu sai (${ids.length})</h2><p><small>Mỗi lần đúng lên 1 hộp, khoảng cách ôn 1→2→4→7→14 ngày. Đúng ở hộp 4 = thuộc hẳn.</small></p>
+<button class="btn r" onclick="startReview()">ÔN NGAY (từng câu)</button><button class="btn w" onclick="startExamWrong()">Câu sai Bắc Ngữ dạng đề</button>
+<table><tr><th>Câu</th><th>Sai</th><th>Hộp</th><th>Ôn lại</th></tr>`;
+ids.forEach(id=>{const w=S.wrong[id];h+=`<tr><td>${label(id)}</td><td>${w.n}×</td><td>${w.box}</td><td>${w.due<=today()?"<b>Hôm nay</b>":w.due}</td></tr>`;});
+app.innerHTML=h+`</table></div>`;}
+
+function vInfo(){app.innerHTML=`<div class="card"><h2>Cấu trúc đề</h2><table>
+<tr><th>Phần</th><th>Đề mẫu chính thức (91 câu, ~200')</th><th>Đề Bắc Ngữ (98 câu, ~210')</th></tr>
+<tr><td>听力</td><td>40 câu · ~33'</td><td>40 câu · ~30'</td></tr>
+<tr><td>阅读</td><td>40 câu · 50' (41–61 / 62–66 / 67–80)</td><td>47 câu · 60' (41–68 / 69–73 / 74–87)</td></tr>
+<tr><td>写作</td><td>2 câu · 55'</td><td>2 câu · 55'</td></tr><tr><td>翻译</td><td>4 câu · ~42'</td><td>4 câu · 41'</td></tr>
+<tr><td>口语</td><td>5 câu · ~20'</td><td>5 câu · ~24'</td></tr></table></div>
+<div class="card"><h3>Mẹo nhanh</h3><div class="tip">• Nghe: √ đúng / × sai / 〇 không nhắc đến. Đọc trước câu hỏi, gạch chân số liệu.
+• Chọn từ: từ loại → kết hợp từ cố định → sắc thái.
+• Sắp xếp đoạn: tìm đoạn định nghĩa/mở bài, theo dấu 最初, 此后…, loại đoạn lạc đề.
+• Trả lời ngắn: chép nguyên cụm trong bài, tối đa 10 chữ.
+• Dịch: dịch theo ý, tách câu dài; dịch nói 2' thì nói đều, không dừng.</div></div>
+<div class="card"><h3>Đáp án tham khảo phần Đọc đề mẫu (tự giải)</h3>
+<p>41A 42D 43C 44B 45D 46B 47A | 48C 49B 50C 51D 52A 53A 54D | 55C 56A 57D 58D 59C 60D 61C</p>
+<p><b>62–66:</b> D → A → F → (E) → G → C, đoạn nhiễu: B</p>
+<p>67 黄河中下游 · 68 语言、风俗 · 70 圆形土楼的结构 · 71 防卫性强 · 74 棉绒短 · 75 盐业 · 76 出棉率更高 · 77 商人聚集 · 78 44个月 · 79 中国纺织高等教育 · 80 对联</p></div>
+<div class="card"><h3>Mẫu câu viết / nói</h3><div class="tip"><b>Biểu đồ:</b> 该图展示了…… 从图中可以看出，……所占比例最高，达到……%；其次是……；而……仅占……%。由此可见，…… 总而言之，……
+<b>Nghị luận:</b> 开头亮观点 → 首先……例如…… → 其次…… → 诚然，有人认为……但是…… → 综上所述，……
+<b>Nói theo thông tin:</b> 各位……，大家好！下面我向大家介绍一下……的安排。首先……然后……最后…… 另外需要提醒大家注意几点：…… 最后，希望大家……
+<b>Quan điểm:</b> 我认为…… 理由有两点：第一……第二…… 举个例子，…… 所以，……</div></div>`;}
+
+function vTimer(){const T=[["听力 đề mẫu",33],["听力 Bắc Ngữ",30],["阅读 đề mẫu",50],["阅读 Bắc Ngữ",60],["写作 biểu đồ",15],["写作 nghị luận",40],["翻译 viết",35],["口译",2],["口语",3]];
+app.innerHTML=`<div class="card"><h2>⏱ Đồng hồ thi thử</h2>${T.map(([n,m])=>`<button class="btn w" onclick="startTimer(${m})">${n} · ${m}'</button>`).join("")}
+<button class="btn r" onclick="stopTimer()">Dừng</button><div class="timer" id="bigtm">00:00</div><p><small>Chuyển sang tab khác sẽ dừng đồng hồ.</small></p></div>`;}
+let TI=null;
+function startTimer(m){stopTimer();let s=m*60;const show=()=>{const t=pad(Math.floor(s/60))+":"+pad(s%60);document.getElementById("tm").textContent="⏱ "+t;const b=document.getElementById("bigtm");if(b)b.textContent=t;};
+show();TI=setInterval(()=>{s--;show();if(s<=0){stopTimer();alert("⏰ Hết giờ!");}},1000);}
+function stopTimer(){clearInterval(TI);TI=null;document.getElementById("tm").textContent="";}
+
+function vSet(){app.innerHTML=`<div class="card"><h2>⚙️ Cài đặt</h2><p>Mục tiêu mỗi ngày:
+<select onchange="S.goal=+this.value;save();hdr()">${[1,2,3,4,5].map(n=>`<option ${n===S.goal?"selected":""}>${n}</option>`).join("")}</select> bài</p>
+<p><button class="btn b" onclick="exportData()">💾 Xuất tiến độ (.json)</button><label class="btn w">📂 Nhập tiến độ<input type="file" accept=".json" style="display:none" onchange="importData(this)"></label></p>
+<p><small>Dùng xuất/nhập để chuyển tiến độ giữa máy tính và điện thoại.</small></p><button class="btn r" onclick="resetAll()">Xóa toàn bộ tiến độ</button></div>`;}
+function exportData(){const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify(S)],{type:"application/json"}));a.download="hsk79-tien-do-"+today()+".json";a.click();}
+function importData(inp){const f=inp.files[0];if(!f)return;const r=new FileReader();
+r.onload=()=>{try{S=Object.assign(S,JSON.parse(r.result));save();alert("Đã nhập tiến độ!");go("home");}catch(e){alert("File không hợp lệ.");}};r.readAsText(f);}
+function resetAll(){if(!confirm("Xóa toàn bộ tiến độ?"))return;localStorage.removeItem(LS);location.reload();}
+
+go("home");
+</script>
+</body>
+</html>
