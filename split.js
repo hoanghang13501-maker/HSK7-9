@@ -80,7 +80,7 @@ drawExam = function(){
   const mins = Math.ceil(L.filter(q=>q.t==="mcf").length*1.3 + L.filter(q=>q.t==="type").length*1.2 + L.filter(q=>q.t==="letters").length*6);
   const G = [], gi = {};
   L.forEach((q,i)=>{
-    const k = q.set+"-"+q.gs;
+    const k = q.set+"-"+(q.gs||parseInt(q.g));
     if(!(k in gi)){ gi[k] = G.length; G.push({k, title:NM(q.set)+" · "+q.g, items:[]}); }
     G[gi[k]].items.push(i);
   });
